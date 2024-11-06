@@ -10,3 +10,11 @@ services:
         - ./data:/var/lib/mysql
       ports:
         - 3306:3306
+    phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      environment:
+        PMA_HOST: db
+        PMA_PORT: 3306
+      restart: always
+      ports:
+        - 8081:80
