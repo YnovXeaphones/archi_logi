@@ -13,6 +13,6 @@ const instance = new Sequelize(
 );
 
 module.exports = {
-    instance,
-    ping: require('./homeModel')(instance)
+    instance: instance,
+    home: require('./homeModel')(instance)
 };

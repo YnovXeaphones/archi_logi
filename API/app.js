@@ -2,12 +2,6 @@ const express = require('express')
 const mysql = require('mysql');
 const app = express()
 
-const db = mysql.createConnection({   
-    host: "localhost",   
-    user: "root",   
-    password: "toor" 
-  });
-
 // revoie un message si le serveur est en marche, qui à fait la demande et à quelle heure et modifie la BD en conséquence.
 const homeRouter = require('./routers/homeRouter');
 app.use('/', homeRouter);
@@ -27,3 +21,9 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 */
+
+app.use((error, req, res, next) => {
+  res.status(error.status || 500).json({success: false, error: error.message,status: error.status});
+});
+
+module.exports = app;

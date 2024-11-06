@@ -1,3 +1,5 @@
+const homeService = require('../services/homeService');
+
 exports.addPing = async (req, res, next) => {
     const ping = homeService.addPing(req.body.mac);
     if(ping) {
