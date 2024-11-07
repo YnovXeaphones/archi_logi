@@ -1,7 +1,7 @@
-import db from '../models/indexModel.js';
+import { home } from '../models/indexModel.js';
 
 const addPing = (mac) => {
-    return db.home.addPing(mac);
+    return home.addPing(mac);
 };
 
 export default {

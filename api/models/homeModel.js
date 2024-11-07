@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize';
 
-const home = (instance) => {
+export default (instance) => {
     instance.define('home', {
         id: {
             primaryKey: true,
@@ -24,8 +24,4 @@ const home = (instance) => {
         timestamps: false       
     }
     );
-}
-
-export default {
-    home: home
 }

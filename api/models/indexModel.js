@@ -1,7 +1,8 @@
 import Sequelize from 'sequelize';
 import dbConfig from '../db.config.js';
+import homeModel from './homeModel.js';
 
-const instance = new Sequelize(
+export const instance = new Sequelize(
     dbConfig.database,
     dbConfig.username,
     dbConfig.password,
@@ -12,9 +13,4 @@ const instance = new Sequelize(
     }
 );
 
-import home from './homeModel.js';
-
-export default {
-    instance: instance,
-    home: home.home(instance)
-};
+export const home = homeModel(instance);
