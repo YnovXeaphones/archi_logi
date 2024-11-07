@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 
 export default (instance) => {
-    instance.define('home', {
+    return instance.define('home', {
         id: {
             primaryKey: true,
             autoIncrement: true,
