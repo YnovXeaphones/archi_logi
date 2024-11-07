@@ -4,8 +4,8 @@ export default (instance) => {
     return instance.define('home', {
         id: {
             primaryKey: true,
-            autoIncrement: true,
-            type: DataTypes.INTEGER
+            type: DataTypes.STRING,
+            allowNull: false
         },
         ip: {
             type: DataTypes.STRING,
