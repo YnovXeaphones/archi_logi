@@ -1,17 +1,13 @@
-import addPing from '../services/homeService.js';
+import { addPing } from '../services/homeService.js';
 
 export const ping = async (req, res) => {
-    console.log(req.body);
-
-    if (req.body) {
+    try {
         const { mac } = req.body;
 
         if (!mac) {
             return res.status(400).json({ message: 'Erreur : "mac" est requis dans le corps de la requête.' });
         }
-    }
 
-    try {
         const ping = await addPing(mac);
         if (ping) {
             res.status(200).json({ message: "Ping reçu et last_ping mis à jour", updated_at: new Date() });
