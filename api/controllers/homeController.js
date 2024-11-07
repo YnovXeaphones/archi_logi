@@ -3,9 +3,10 @@ import addPing from '../services/homeService.js';
 export const ping = async (req, res) => {
     const ping = addPing(req.body.mac);
     if(ping) {
-        res.status(201).json(ping);
+        res.status(200).json({ message: "Ping reçu et last_ping mis à jour", updated_at: currentTime });
     } else {
-        res.status(400).json({ message: 'Error adding ping' });
+        console.error('Erreur de mise à jour du last_ping:', error);
+        res.status(500).json({ message: 'Erreur serveur', error: error.message });
     }
 };
 
