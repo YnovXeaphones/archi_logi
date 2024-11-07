@@ -1,9 +1,10 @@
 import { home } from '../models/indexModel.js';
 
-const addPing = (mac) => {
-    return home.addPing(mac);
+export const addPing = async (mac) => {
+    try {
+        console.log('Ajout du ping pour:', mac);
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout du ping:', error);
+        throw error;
+    }
 };
-
-export default {
-    addPing: addPing
-}
