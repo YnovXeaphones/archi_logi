@@ -14,9 +14,5 @@ send_ping() {
         echo "$(date) - Erreur de mise à jour, code réponse $RESPONSE"
     fi
 }
-
-# Exécution toutes les X minutes (par exemple, 5 minutes)
-while true; do
-    send_ping
-    sleep 300  # 300 secondes = 5 minutes
-done
+send_ping
+#ajouter dans un cron
