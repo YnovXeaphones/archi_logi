@@ -1,5 +1,4 @@
 const express = require('express')
-const mysql = require('mysql');
 const app = express()
 
 // revoie un message si le serveur est en marche, qui à fait la demande et à quelle heure et modifie la BD en conséquence.

@@ -1,8 +1,8 @@
 module.exports = {
-    host: "localhost",
-    username: "root",
-    password: "toor",
-    database: "server",
-    port: 3306
+    host: process.env.HOST || "db",
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE || "test",
+    port: process.env.DB_PORT || 3306
 }
     
