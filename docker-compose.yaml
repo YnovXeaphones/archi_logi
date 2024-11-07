@@ -58,3 +58,10 @@ services:
         DB_USER: root
         DB_PASSWORD: toor
         DB_DATABASE: server
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.api.rule=Host(`api.airnet.com`)"  # Ton domaine pour l'API
+        - "traefik.http.routers.api.entrypoints=https"  # Indiquer que le routage est fait via HTTPS
+        - "traefik.http.routers.api.tls=true"  # Activer TLS pour HTTPS
+        - "traefik.http.routers.api.tls.certresolver=http"  # Utilisation de Let's Encrypt pour obtenir le certificat
+        - "traefik.http.services.api.loadbalancer.server.port=3000"  # Indiquer que le service écoute sur le port 3000 à l'intérieur du container
