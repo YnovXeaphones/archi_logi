@@ -1,5 +1,5 @@
-const express = require('express')
-const mysql = require('mysql');
+import express from 'express';
+import mysql from 'mysql';
 const app = express()
 
 const db = mysql.createConnection({   
@@ -9,7 +9,7 @@ const db = mysql.createConnection({
   });
 
 // revoie un message si le serveur est en marche, qui à fait la demande et à quelle heure et modifie la BD en conséquence.
-const homeRouter = require('./routers/homeRouter');
+import homeRouter from './routers/homeRouter.js';
 app.use('/', homeRouter);
 
 /*

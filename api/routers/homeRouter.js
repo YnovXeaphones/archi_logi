@@ -1,7 +1,7 @@
-const express = require('express'),
-router = express.Router(),
-homeController = require('../controllers/homeController');
+import { Router } from 'express';
+const router = Router();
+import homeController from '../controllers/homeController.js';
 
-router.post('/', homeController.addPing);
+router.post('/', homeController.ping);
 
-module.exports = router;
+export default router;

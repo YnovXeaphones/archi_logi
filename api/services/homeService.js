@@ -1,5 +1,9 @@
-const db = require('../models/indexModel');
+import db from '../models/indexModel.js';
 
-exports.addPing = (mac) => {
-    return db.home.addPing({ mac });
+const addPing = (mac) => {
+    return db.home.addPing(mac);
 };
+
+export default {
+    addPing: addPing
+}

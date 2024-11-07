@@ -1,8 +1,8 @@
-const express = require('express')
+import express from 'express';
 const app = express()
 
 // revoie un message si le serveur est en marche, qui à fait la demande et à quelle heure et modifie la BD en conséquence.
-const homeRouter = require('./routers/homeRouter');
+import homeRouter from './routers/homeRouter.js';
 app.use('/', homeRouter);
 
 /*
@@ -25,4 +25,4 @@ app.use((error, req, res, next) => {
   res.status(error.status || 500).json({success: false, error: error.message,status: error.status});
 });
 
-module.exports = app;
+export default app;

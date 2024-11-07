@@ -58,3 +58,4 @@ services:
         DB_USER: root
         DB_PASSWORD: toor
         DB_DATABASE: server
+        DB_HOST: db

@@ -1,7 +1,7 @@
-const { DataTypes } = require('sequelize');
+import { DataTypes } from 'sequelize';
 
-module.exports = (instance) => {
-    return instance.define('home', {
+const home = (instance) => {
+    instance.define('home', {
         id: {
             primaryKey: true,
             autoIncrement: true,
@@ -24,4 +24,8 @@ module.exports = (instance) => {
         timestamps: false       
     }
     );
-};
+}
+
+export default {
+    home: home
+}

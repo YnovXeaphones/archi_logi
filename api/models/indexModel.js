@@ -1,5 +1,5 @@
-const { Sequelize} = require('sequelize');
-const dbConfig = require('../db.config');
+import Sequelize from 'sequelize';
+import dbConfig from '../db.config.js';
 
 const instance = new Sequelize(
     dbConfig.database,
@@ -12,7 +12,9 @@ const instance = new Sequelize(
     }
 );
 
-module.exports = {
+import home from './homeModel.js';
+
+export default {
     instance: instance,
-    home: require('./homeModel')(instance)
+    home: home.home(instance)
 };
