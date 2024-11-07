@@ -7,16 +7,24 @@ export default (instance) => {
             autoIncrement: true,
             type: DataTypes.INTEGER
         },
-        ip: {
+        mac: {
             type: DataTypes.STRING,
+            allowNull: false
+        },
+        port: {
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         last_ping: {
             type: DataTypes.DATE,
             allowNull: false
         },
-        port: {
-            type: DataTypes.INTEGER,
+        datecreated: {
+            type: DataTypes.DATE,
+            allowNull: false
+        },
+        sshkey: {
+            type: DataTypes.STRING,
             allowNull: false
         }
     },

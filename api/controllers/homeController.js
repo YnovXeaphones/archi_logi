@@ -9,8 +9,9 @@ export const ping = async (req, res) => {
         }
 
         const ping = await addPing(mac);
+        console.log('Ping:', ping);
         if (ping) {
-            res.status(200).json({ message: "Ping reçu et last_ping mis à jour", updated_at: new Date() });
+            res.status(200).json({ message: "Ping reçu et last_ping mis à jour", updated_at: ping });
         } else {
             res.status(500).json({ message: 'Erreur serveur lors de la mise à jour du last_ping' });
         }
