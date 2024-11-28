@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Chemin vers le script à exécuter
-SCRIPT_PATH="./ping_script.sh"
-LOG_PATH="../logs/ping.log"
+SCRIPT_PATH=$(realpath ./ping_script.sh)
+LOG_PATH=$(realpath ../logs/ping.log)
 
-# Fréquence du cron job (ici toutes les 5 minutes)
-CRON_JOB="*/5 * * * * $SCRIPT_PATH >> $LOG_PATH 2>&1"
+# Fréquence du cron job (ici toutes les minutes)
+CRON_JOB="*/1 * * * * $SCRIPT_PATH >> $LOG_PATH 2>&1"
 
 # Vérifier si le cron job est déjà présent
 (crontab -l 2>/dev/null | grep -F "$SCRIPT_PATH") >/dev/null
