@@ -1,4 +1,4 @@
-import { addPing } from '../services/homeService.js';
+import { addPing, addHome } from '../services/homeService.js';
 
 export const ping = async (req, res) => {
     try {
@@ -20,6 +20,24 @@ export const ping = async (req, res) => {
     }
 };
 
-export default {
-    ping
+export const register = async (req, res) => {
+    try {
+        const { mac, sshkey } = req.body;
+
+        if (!mac || !sshkey) {
+            return res.status(400).json({ message: 'Erreur : "mac" et "sshkey" sont requis dans le corps de la requête.' });
+        }
+
+        const register = await addHome(mac, sshkey);
+        if (register.code === 200) {
+            res.status(200).json({ message: "Enregistrement réussi", created_at: register.message });
+        } else {
+            res.status(register.code).json({ message: 'Erreur serveur lors de l\'enregistrement', error: register.message });
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'enregistrement:', error);
+        res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    }
 };
+
+export default { ping, register };

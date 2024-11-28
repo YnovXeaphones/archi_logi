@@ -4,8 +4,8 @@ export default (instance) => {
     return instance.define('home', {
         id: {
             primaryKey: true,
-            autoIncrement: true,
-            type: DataTypes.INTEGER
+            autoIncrement: false,
+            type: DataTypes.STRING,
         },
         mac: {
             type: DataTypes.STRING,
@@ -13,11 +13,11 @@ export default (instance) => {
         },
         port: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         },
         last_ping: {
             type: DataTypes.DATE,
-            allowNull: false
+            allowNull: true
         },
         datecreated: {
             type: DataTypes.DATE,

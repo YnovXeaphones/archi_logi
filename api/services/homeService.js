@@ -1,4 +1,5 @@
 import { home } from '../models/indexModel.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export const addPing = async (mac) => {
     try {
@@ -16,3 +17,15 @@ export const addPing = async (mac) => {
         throw error;
     }
 };
+
+export const addHome = async (mac, sshkey) => {
+    try {
+        const date = new Date();
+
+        let create = await home.create({id: uuidv4(), mac: mac, last_ping: null, port: null, datecreated: date, sshkey: sshkey });
+        return { code: 200, message: date };
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout de la maison:', error);
+        throw error;
+    }
+}
