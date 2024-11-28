@@ -6,7 +6,7 @@ URL="http://api.localhost/ping"
 # Fonction pour envoyer le ping
 send_ping() {
     # Envoi de la requête et capture de la réponse complète et du code de statut HTTP
-    RESPONSE=$(curl --silent --write-out "\nHTTP_STATUS:%{http_code}" -X POST "$URL" -H "Content-Type: application/json" -d '{"mac": "00:11:22:33:44:55"}')
+    RESPONSE=$(curl --silent --write-out "\nHTTP_STATUS:%{http_code}" -X POST "$URL" -H "Content-Type: application/json" -d '{"mac": "test"}')
 
     # Séparation de la partie corps de la réponse et du code HTTP
     HTTP_BODY=$(echo "$RESPONSE" | sed -e 's/HTTP_STATUS:.*//g')
