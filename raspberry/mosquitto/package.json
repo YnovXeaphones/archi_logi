@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.5",
+    "ioredis": "^5.4.1",
     "mqtt": "^5.10.1",
     "sensor-simulation": "file:"
   }
