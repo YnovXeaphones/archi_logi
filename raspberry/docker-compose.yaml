@@ -12,12 +12,34 @@ services:
     platform: linux/arm/v7
 
   mqtt:
-    image: eclipse-mosquitto:latest
+    image: eclipse-mosquitto:2.0
     container_name: mosquitto
     restart: unless-stopped
     ports:
-      - 1883:1883
+      - 1884:1884
     volumes:
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/mosquitto_passwd:/mosquitto/config/mosquitto_passwd
     platform: linux/arm/v7
+    networks:
+      - mqtt_network
+
+  simulator:
+    build: .
+    depends_on:
+      - mqtt
+    environment:
+      MQTT_BROKER_URL: mqtt://mqtt:1884
+      DATA_FREQUENCY: ${DATA_FREQUENCY:-5000}
+      SENSOR_COUNT: ${SENSOR_COUNT:-4}
+      MQTT_QOS: ${MQTT_QOS:-0}
+    env_file:
+      - ./mosquitto/.env
+    networks:
+      - mqtt_network
+
+networks:
+  mqtt_network:
+    driver: bridge
