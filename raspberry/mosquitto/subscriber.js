@@ -60,13 +60,29 @@ function connectMQTT() {
             console.log(`Value: ${parsedMessage.value}`);
             console.log(`Timestamp: ${parsedMessage.timestamp}`);
 
-            // Storing the data in Redis (using SET to store the latest message)
-            redis.set(`mqtt:data:${parsedMessage.timestamp}`, JSON.stringify({
-                topic: topic,
-                value: parsedMessage.value,
-                timestamp: parsedMessage.timestamp,
-                mac: parsedMessage.mac
-            }));
+           // Si connecté au Wi-Fi, envoyer les données à InfluxDB, sinon stocker dans Redis
+      if (isConnectedToWifi()) {
+        // Envoi à InfluxDB
+        // const point = {
+        //   measurement: topic,
+        //   tags: { mac: parsedMessage.mac },
+        //   fields: { value: parsedMessage.value },
+        //   timestamp: parsedMessage.timestamp,
+        // };
+        // writeApi.writeRecords([point]).then(() => {
+        //   console.log('Data written to InfluxDB');
+        // }).catch(err => {
+        //   console.error('Error writing data to InfluxDB', err);
+        // });
+      } else {
+        // Stocker dans Redis
+        redis.set(`mqtt:data:${parsedMessage.timestamp}`, JSON.stringify({
+          topic: topic,
+          value: parsedMessage.value,
+          timestamp: parsedMessage.timestamp,
+          mac: parsedMessage.mac
+        }));
+      }
             
         } catch (error) {
             console.error('Error parsing message:', error);
