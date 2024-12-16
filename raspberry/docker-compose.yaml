@@ -3,13 +3,14 @@ services:
   homeassistant:
     image: ghcr.io/home-assistant/home-assistant:stable
     container_name: homeassistant
-    privileged: true
     restart: unless-stopped
     volumes:
       - ./homeassistant:/config
     ports:
       - 8123:8123
     platform: linux/arm/v7
+    
+
 
   mqtt:
     image: eclipse-mosquitto:latest
@@ -20,4 +21,19 @@ services:
     volumes:
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
-    platform: linux/arm/v7
+    platform: linux/arm/v6
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "1883"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+      start_period: 5s
+
+  wait-service:
+    build: .
+    container_name: wait-service
+    depends_on:
+      homeassistant:
+        condition: service_started
+      mqtt:
+        condition: service_healthy

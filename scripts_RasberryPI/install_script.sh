@@ -19,4 +19,4 @@ sudo apt install -y python3 python3-pip
 # Installer les bibliothèques Python nécessaires
 pip3 install paho-mqtt redis influxdb
 
-echo "Installation de Mosquitto, Redis, Python, pip et des bibliothèques Python terminée."
+echo "Installation de Mosquitto, Redis, Python, pip et des bibliothèques Python terminée." 
