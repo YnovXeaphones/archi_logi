@@ -3,6 +3,7 @@ node_modules/*
 api/node_modules/*
 .vscode/*
 broker/node_modules/*
+influxdb2/influx-configs
 raspberry/mosquitto/node_modules/*
 raspberry/mosquitto/data/*
 raspberry/homeassistant/.storage/*
