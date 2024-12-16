@@ -24,11 +24,11 @@ const redis = new Redis({
 });
 
 redis.on('connect', () => {
-    console.log('Connected to Redis !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    console.log('Connected to Redis.');
 });
   
 redis.on('error', (err) => {
-console.error('Redis error: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', err);
+console.error('Redis error: ', err);
 });
 
 // let client = mqtt.connect(MQTT_BROKER_URL, options);
@@ -66,12 +66,6 @@ function connectMQTT() {
                 value: parsedMessage.value,
                 timestamp: parsedMessage.timestamp,
                 mac: parsedMessage.mac
-            }));
-
-            // Publier les données dans Redis pour la diffusion en temps réel
-            redis.publish('mqtt/messages', JSON.stringify({
-                topic,
-                message: parsedMessage
             }));
             
         } catch (error) {

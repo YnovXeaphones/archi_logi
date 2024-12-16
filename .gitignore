@@ -4,3 +4,7 @@ api/node_modules/*
 .vscode/*
 broker/node_modules/*
 raspberry/mosquitto/node_modules/*
+raspberry/mosquitto/data/*
+raspberry/homeassistant/.storage/*
+raspberry/homeassistant/home-assistant_v2.db
+raspberry/homeassistant/homeassistant.log
