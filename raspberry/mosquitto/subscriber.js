@@ -74,4 +74,54 @@ function connectMQTT() {
     });
 }
 
+// Fonction pour envoyer les données stockées dans Redis à InfluxDB
+// function sendDataToInfluxDB() {
+//     redis.keys('mqtt:data:*', (err, keys) => {
+//       if (err) {
+//         console.error('Error retrieving keys from Redis:', err);
+//         return;
+//       }
+  
+//       if (keys.length === 0) {
+//         console.log('No data to send to InfluxDB');
+//         return;
+//       }
+  
+//       // Récupérer les données stockées dans Redis
+//       redis.mget(keys, (err, data) => {
+//         if (err) {
+//           console.error('Error retrieving data from Redis:', err);
+//           return;
+//         }
+  
+//         const points = data.map((item) => {
+//           const parsedItem = JSON.parse(item);
+//           return {
+//             measurement: parsedItem.topic,
+//             tags: { mac: parsedItem.mac },
+//             fields: { value: parsedItem.value },
+//             timestamp: parsedItem.timestamp,
+//           };
+//         });
+  
+//         // Envoi des données à InfluxDB
+//         writeApi.writeRecords(points).then(() => {
+//           console.log('Data written to InfluxDB');
+//           // Nettoyer Redis après envoi
+//           redis.del(keys);
+//           console.log('Redis data cleared');
+//         }).catch(err => {
+//           console.error('Error writing data to InfluxDB', err);
+//         });
+//       });
+//     });
+//   }
+  
+//   // Vérifier périodiquement si la connexion Wi-Fi est rétablie et envoyer les données stockées
+//   setInterval(() => {
+//     if (isConnectedToWifi()) {
+//       sendDataToInfluxDB();
+//     }
+//   }, 30000);  // Vérification toutes les 30 secondes
+
 connectMQTT();
