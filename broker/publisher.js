@@ -3,7 +3,7 @@ require('dotenv').config(); // Add this line to load environment variables from 
 const mqtt = require('mqtt');
 
 // Environment variables
-const MQTT_BROKER_URL = process.env.MQTT_BROKER_URL || 'mqtt://localhost';
+const MQTT_BROKER_URL = process.env.MQTT_BROKER_URL || '';
 const MQTT_USERNAME = process.env.MQTT_USERNAME || '';
 const MQTT_PASSWORD = process.env.MQTT_PASSWORD || '';
 const DATA_FREQUENCY = parseInt(process.env.DATA_FREQUENCY, 10) || 5000; // in milliseconds

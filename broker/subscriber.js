@@ -11,7 +11,7 @@ const options = {
     password: MQTT_PASSWORD
 };
 
-let client = mqtt.connect(MQTT_BROKER_URL, options);
+// let client = mqtt.connect(MQTT_BROKER_URL, options);
 
 function connectMQTT() {
     client = mqtt.connect(MQTT_BROKER_URL, options);
