@@ -38,8 +38,8 @@ services:
       volumes:
         # So that Traefik can listen to the Docker events
         - /var/run/docker.sock:/var/run/docker.sock
-        - ./traefik/traefik.yml:/etc/traefik/traefik.yml 
-        - ./traefik/dynamic-config.yml:/etc/traefik/dynamic-config.yml  # Configuration dynamique de Traefik
+        - ./config/traefik/traefik.yml:/etc/traefik/traefik.yml 
+        - ./config/traefik/dynamic-config.yml:/etc/traefik/dynamic-config.yml  # Configuration dynamique de Traefik
     whoami:
       image: traefik/whoami
       deploy:
@@ -79,4 +79,4 @@ services:
         DOCKER_INFLUXDB_INIT_BUCKET: home
       volumes:
         - ./data/influxdb2:/var/lib/influxdb2
-        - ./influxdb2:/etc/influxdb2
+        - ./config/influxdb2:/etc/influxdb2
