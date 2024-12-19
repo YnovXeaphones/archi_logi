@@ -30,7 +30,7 @@ export const register = async (req, res) => {
 
         const register = await addHome(mac, sshkey);
         if (register.code === 200) {
-            res.status(200).json({ message: "Enregistrement réussi", created_at: register.message });
+            res.status(200).json({ message: register.message });
         } else {
             res.status(register.code).json({ message: 'Erreur serveur lors de l\'enregistrement', error: register.message });
         }

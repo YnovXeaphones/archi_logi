@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 import dbConfig from '../db.config.js';
 import homeModel from './homeModel.js';
+import portModel from './portModel.js';
 
 export const instance = new Sequelize(
     dbConfig.database,
@@ -14,3 +15,4 @@ export const instance = new Sequelize(
 );
 
 export const home = homeModel(instance);
+export const port = portModel(instance);
