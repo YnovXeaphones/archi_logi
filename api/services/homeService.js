@@ -1,5 +1,7 @@
 import { home } from '../models/indexModel.js';
 import { v4 as uuidv4 } from 'uuid';
+import Sequelize from 'sequelize';
+
 
 export const addPing = async (mac) => {
     try {
@@ -64,7 +66,7 @@ export const getActiveDevices = async () => {
         // Requête pour récupérer les appareils actifs
         const activeDevices = await home.findAll({
             where: Sequelize.literal(`last_ping > '${formattedThreshold}'`), // Utilise une condition SQL brute
-            attributes: ['mac', 'ip', 'port','datecreated', 'sshkey', ], // Adapter selon les colonnes de ta table
+            attributes: ['id', 'mac', 'port','last_ping','datecreated', 'sshkey', ], // Adapter selon les colonnes de ta table
         });
 
         return activeDevices;

@@ -1,4 +1,7 @@
 import { addPing, addHome , getActiveDevices} from '../services/homeService.js';
+import fs from 'fs';
+import path from 'path';
+
 
 export const ping = async (req, res) => {
     try {
@@ -58,14 +61,14 @@ export const traefikconfig = async (req, res) => {
         };
 
         activeDevices.forEach((device) => {
-            const mac = device.mac;
-            const host = `${mac}.docker.localhost`;
+            const mac = device.mac.replace(/:/g, '-'); // Remplacer ":" par "-" pour un format valide
+            const host = `rasp-${mac}.g1.south-squad.io`; // Construire le domaine basé sur le MAC
 
             // Ajouter un routeur
             config.http.routers[`${mac}-router`] = {
+                entryPoints: ['web'],
                 rule: `Host(\`${host}\`)`,
                 service: `${mac}-service`,
-                entryPoints: ['web'],
             };
 
             // Ajouter un service
@@ -73,12 +76,28 @@ export const traefikconfig = async (req, res) => {
                 loadBalancer: {
                     servers: [
                         {
-                            url: `http://${device.ip}:${device.port}`,
+                            url: `http://${host}`, // Utilisation du domaine basé sur le MAC
                         },
                     ],
                 },
             };
         });
+
+
+
+        // Chemin vers le fichier dynamic-config.yml
+        const configDir = path.resolve('/app/config/traefik');
+        const configPath = path.join(configDir, 'dynamic-config.yml');
+
+        // Vérifier si le répertoire existe, sinon le créer
+        if (!fs.existsSync(configDir)) {
+            fs.mkdirSync(configDir, { recursive: true });
+        }
+
+        // Écrire la configuration dans le fichier
+        fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+
+
 
         // Retourner la configuration
         res.status(200).json(config);
@@ -86,7 +105,6 @@ export const traefikconfig = async (req, res) => {
         console.error('Erreur lors de la génération de la configuration Traefik:', error);
         res.status(500).json({ message: 'Erreur serveur', error: error.message });
     }
-    
 };
 
 export default { ping, register, traefikconfig };
