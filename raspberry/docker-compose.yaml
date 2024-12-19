@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   homeassistant:
     image: ghcr.io/home-assistant/home-assistant:stable
@@ -10,7 +9,6 @@ services:
       - 8123:8123
     platform: linux/arm/v7
     
-
 
   mqtt:
     image: eclipse-mosquitto:latest
