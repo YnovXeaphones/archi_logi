@@ -68,6 +68,7 @@ services:
         # - "traefik.http.routers.api.tls=true"  # Activer TLS pour HTTPS
         # - "traefik.http.routers.api.tls.certresolver=http"  # Utilisation de Let's Encrypt pour obtenir le certificat
         - "traefik.http.services.api.loadbalancer.server.port=3000"  # Indiquer que le service écoute sur le port 3000 à l'intérieur du container
+    
     influxdb2:
       image: influxdb:2.7
       ports:
@@ -81,3 +82,9 @@ services:
       volumes:
         - ./data/influxdb2:/var/lib/influxdb2
         - ./config/influxdb2:/etc/influxdb2
+      networks:
+      - app_network
+
+networks:
+  app_network:
+    external: true

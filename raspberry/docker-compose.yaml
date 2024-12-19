@@ -36,6 +36,7 @@ services:
       - ./mosquitto/.env
     networks:
       - mqtt_network
+      - app_network
   redis:
     image: redis/redis-stack:latest
     container_name: redis-stack
@@ -54,5 +55,7 @@ services:
 networks:
   mqtt_network:
     driver: bridge
+  app_network:
+    external: true
 
 
