@@ -49,7 +49,7 @@ export const initializeSequelize = async () => {
 };
 
 // Appel de la fonction pour obtenir les instances
-const { instance, home } = await initializeSequelize();
+const { instance, home, port } = await initializeSequelize();
 
 // Exportation de l'instance et du modèle
 export { instance, home, port };
