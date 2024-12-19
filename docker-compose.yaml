@@ -1,4 +1,10 @@
-version: '2'
+version: '3.8'
+
+networks:
+  traefik_network:
+    driver: bridge
+
+
 services:
     db:
       image: mysql:latest
@@ -40,6 +46,9 @@ services:
         - /var/run/docker.sock:/var/run/docker.sock
         - ./config/traefik/traefik.yml:/etc/traefik/traefik.yml 
         - ./config/traefik/dynamic-config.yml:/etc/traefik/dynamic-config.yml  # Configuration dynamique de Traefik
+      networks:
+      - traefik_network
+
     whoami:
       image: traefik/whoami
       deploy:
@@ -48,6 +57,9 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
         - "traefik.http.services.whoami.loadbalancer.server.port=80"
+      networks:
+      - traefik_network
+
     api:
       build: ./api
       ports:
@@ -55,6 +67,7 @@ services:
       restart: unless-stopped
       depends_on:
         - db
+        - reverse-proxy  # Ajoutez cette ligne
       environment:
         DB_USER: root
         DB_PASSWORD: toor
@@ -67,6 +80,9 @@ services:
         # - "traefik.http.routers.api.tls=true"  # Activer TLS pour HTTPS
         # - "traefik.http.routers.api.tls.certresolver=http"  # Utilisation de Let's Encrypt pour obtenir le certificat
         - "traefik.http.services.api.loadbalancer.server.port=3000"  # Indiquer que le service écoute sur le port 3000 à l'intérieur du container
+      networks:
+      - traefik_network
+
     influxdb2:
       image: influxdb:2.7
       ports:
