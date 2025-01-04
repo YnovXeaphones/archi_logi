@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-RUN apk add --no-cache curl bash python3 py3-pip openrc
+RUN apk add --no-cache curl bash python3 py3-pip openrc jq
 
 COPY lancementRaspberry.sh /usr/local/bin/lancementRaspberry.sh
 COPY install_script.sh /usr/local/bin/install_script.sh

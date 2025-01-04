@@ -8,7 +8,6 @@ services:
     ports:
       - 8123:8123
     platform: linux/arm/v7
-    
 
   mqtt:
     image: eclipse-mosquitto:latest
@@ -26,7 +25,14 @@ services:
       timeout: 2s
       retries: 3
       start_period: 5s
-
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    restart: always
   wait-service:
     build: .
     container_name: wait-service

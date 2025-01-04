@@ -5,18 +5,13 @@ echo "Lancement de l'installation"
 # Mettre à jour les index des paquets
 apk update
 
-# Installer Mosquitto (MQTT broker) et les clients
-apk add mosquitto mosquitto-clients
-rc-update add mosquitto default
-rc-service mosquitto start
-
 # Installer Redis
-apk add redis
-rc-update add redis default
-rc-service redis start
+#apk add redis
+#rc-update add redis default
+#rc-service redis start
 
 # Installer Python et pip
-apk add python3 py3-pip
+apk add python3 py3-pip jq
 
 # Créer un environnement virtuel Python car sinon interdis d'installer
 python3 -m venv /venv
