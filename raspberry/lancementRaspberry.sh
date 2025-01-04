@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Début du script"
+
 set -euo pipefail
 
 # Fonction pour envoyer le ping
@@ -41,6 +43,10 @@ retrieve_config() {
     fi
 }
 
+echo "Lancement de Docker Compose..."
+docker-compose up -d
+
+echo "Vérification de l'existence de /usr/local/bin/install_script.sh"
 # Exécution du script
 if [ -f /usr/local/bin/install_script.sh ]; then
     echo "Lancement de install_script.sh..."
@@ -53,9 +59,10 @@ if [ -f /usr/local/bin/install_script.sh ]; then
     echo "Ouverture de la connexion SSH..."
     ssh -p $SSH_PORT user@remote_host
 
-    echo "Lancement de Docker Compose..."
-    docker-compose up -d
+    
 else
     echo "Erreur dans l'installation"
     exit 1
 fi
+
+echo "Fin du script"

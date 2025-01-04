@@ -5,13 +5,10 @@ echo "Lancement de l'installation"
 # Mettre à jour les index des paquets
 apk update
 
-# Installer Redis
-#apk add redis
-#rc-update add redis default
-#rc-service redis start
-
+# Installer Python et pip (déjà installé dans Dockerfile)
+# apk add python3 py3-pip jq
 # Installer Python et pip
-apk add python3 py3-pip jq
+# apk add python3 py3-pip jq
 
 # Créer un environnement virtuel Python car sinon interdis d'installer
 python3 -m venv /venv
