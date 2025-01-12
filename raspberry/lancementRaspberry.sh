@@ -43,26 +43,16 @@ retrieve_config() {
     fi
 }
 
+echo "Récupération de la configuration..."
+retrieve_config
+
+echo "Envoie du ping..."
+send_ping &
+
+echo "Ouverture de la connexion SSH..."
+ssh -p $SSH_PORT user@remote_host
+
 echo "Lancement de Docker Compose..."
 docker-compose up -d
-
-echo "Vérification de l'existence de /usr/local/bin/install_script.sh"
-# Exécution du script
-if [ -f /usr/local/bin/install_script.sh ]; then
-    echo "Lancement de install_script.sh..."
-    bash /usr/local/bin/install_script.sh
-
-    retrieve_config
-
-    send_ping &
-
-    echo "Ouverture de la connexion SSH..."
-    ssh -p $SSH_PORT user@remote_host
-
-    
-else
-    echo "Erreur dans l'installation"
-    exit 1
-fi
 
 echo "Fin du script"
