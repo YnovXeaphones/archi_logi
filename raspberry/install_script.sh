@@ -9,6 +9,8 @@ apk update
 # apk add python3 py3-pip jq
 # Installer Python et pip
 # apk add python3 py3-pip jq
+# Installer jq
+# apk add jq
 
 # Créer un environnement virtuel Python car sinon interdis d'installer
 python3 -m venv /venv

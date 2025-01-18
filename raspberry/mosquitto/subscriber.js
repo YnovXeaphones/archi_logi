@@ -20,7 +20,7 @@ const options = {
     password: MQTT_PASSWORD
 };
 
-const url = 'http://archi_logi-influxdb2-1:8086';
+const url = 'http://influxdb.g1.south-squad.io:8086';
 const token = "q8mO12cz7LoGgsBd0YhV2j6ysA9kjIW8Bo-gcPRxcY3ez36WEBrwOLXEgMXcH-2Ucyv1DJ2CWuTu32wfnqLuGg==";
 
 // Connexion à Redis
