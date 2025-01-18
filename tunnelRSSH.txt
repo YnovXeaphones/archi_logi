@@ -1,0 +1,50 @@
+Commande a faire pour faire la connexion rssh :
+ssh -N -R 8080:localhost:80 utilisateur@serveur-distant
+
+Peux aussi être fait avec crontb ou systemd
+Crtontab : + léger et simple a configurer
+Systemd : + complexe mais + robuste ainsi que surveillance + reboot auto en cas de déco et gère mieux dépendances
+meilleur choix pour moi : systemd
+Si linux et systemd :
+sudo nano /etc/systemd/system/reverse-ssh.service
+
+[Unit]
+Description=Tunnel SSH inversé
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/ssh -N -R 8080:localhost:80 utilisateur@serveur-distant
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl enable reverse-ssh
+sudo systemctl start reverse-ssh
+
+configurer le serveur distant pour qu'il redirige le trafic vers le port 80
+ouvrir le fichier de configuration sshd_config et mettre
+GatewayPorts yes 
+allowTcpForwarding yes
+puis redémarrer le service sshd
+Configurer le raspberry pour avoir un service actif que l'on souhaite exposer
+il faut mettre nginx
+Configurer le serveur web :
+sudo nano /etc/nginx/sites-available/default
+et dans le fichier mettre config du type :
+server {
+    listen 80;
+    server_name localhost;
+
+    root /var/www/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+puis sudo systemctl restart nginx
+puis test avec curl http://localhost:8080/ et si problème vérifier journaux ssh de la raspberry et nginx du serveur
+journalctl -u reverse-ssh
+pour vérifier logs serveur distant :
+tail -f /var/log/auth.log
