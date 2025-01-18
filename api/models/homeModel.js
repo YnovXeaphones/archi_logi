@@ -20,7 +20,7 @@ export default (instance) => {
             allowNull: false
         },
         sshkey: {
-            type: DataTypes.TEXT('long'),
+            type: DataTypes.STRING(2048),
             allowNull: false
         }
     },
