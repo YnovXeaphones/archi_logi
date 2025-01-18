@@ -55,7 +55,7 @@ export const addHome = async (mac, sshkey) => {
             homeid = exist.id;
         }
 
-        let ports = [22];
+        let ports = [80];
         let allocatedPorts = [];
 
         for (let currentPort of ports) {

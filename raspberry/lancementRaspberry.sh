@@ -66,7 +66,7 @@ retrieve_config() {
         echo "Réponse de l'API : $response_body"
         
         # Récupération des données
-        ssh_port=$(echo "$response_body" | jq -r '.message.ports[22]')
+        ssh_port=$(echo "$response_body" | jq -r '.message.ports[80]')
         bucket=$(echo "$response_body" | jq -r '.message.bucketName')
 
         echo "Port : $ssh_port"
@@ -84,7 +84,7 @@ echo "Envoie du ping..."
 send_ping >/dev/null 2>&1 &
 
 echo "Ouverture de la connexion SSH..."
-ssh -o StrictHostKeyChecking=no -R $ssh_port:localhost:22 user@localhost
+ssh -o StrictHostKeyChecking=no -N -R $ssh_port:localhost:80 g1@server.g1.south-squad.io &
 echo "Lancement de Docker Compose..."
 docker-compose up -d
 
