@@ -8,7 +8,7 @@ services:
         MYSQL_PASS: 'pass'
         MYSQL_DATABASE: 'server'
       volumes:
-        - ./data:/var/lib/mysql
+        - ./data/mysql:/var/lib/mysql
       ports:
         - 3306:3306
     phpmyadmin:
@@ -39,8 +39,8 @@ services:
       volumes:
         # So that Traefik can listen to the Docker events
         - /var/run/docker.sock:/var/run/docker.sock
-        - ./traefik/traefik.yml:/etc/traefik/traefik.yml 
-        - ./traefik/dynamic-config.yml:/etc/traefik/dynamic-config.yml  # Configuration dynamique de Traefik
+        - ./config/traefik/traefik.yml:/etc/traefik/traefik.yml 
+        - ./config/traefik/dynamic-config.yml:/etc/traefik/dynamic-config.yml  # Configuration dynamique de Traefik
     whoami:
       image: traefik/whoami
       deploy:
@@ -68,3 +68,23 @@ services:
         # - "traefik.http.routers.api.tls=true"  # Activer TLS pour HTTPS
         # - "traefik.http.routers.api.tls.certresolver=http"  # Utilisation de Let's Encrypt pour obtenir le certificat
         - "traefik.http.services.api.loadbalancer.server.port=3000"  # Indiquer que le service écoute sur le port 3000 à l'intérieur du container
+    
+    influxdb2:
+      image: influxdb:2.7
+      ports:
+        - 8086:8086
+      environment:
+        DOCKER_INFLUXDB_INIT_MODE: setup
+        DOCKER_INFLUXDB_INIT_USERNAME: test
+        DOCKER_INFLUXDB_INIT_PASSWORD: test12345
+        DOCKER_INFLUXDB_INIT_ORG: docs
+        DOCKER_INFLUXDB_INIT_BUCKET: home
+      volumes:
+        - ./data/influxdb2:/var/lib/influxdb2
+        - ./config/influxdb2:/etc/influxdb2
+      networks:
+      - app_network
+
+networks:
+  app_network:
+    external: true

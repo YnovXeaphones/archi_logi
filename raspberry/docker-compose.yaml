@@ -1,11 +1,25 @@
 services:
+<<<<<<< HEAD
+=======
+  # homeassistant:
+  #   image: homeassistant/home-assistant:stable
+  #   container_name: homeassistant
+  #   privileged: true
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./homeassistant:/config
+  #   ports:
+  #     - 8123:8123
+>>>>>>> origin/dev
   mqtt:
     image: eclipse-mosquitto:latest
     container_name: mosquitto
+    platform: linux/amd64 
     restart: unless-stopped
     ports:
-      - 1883:1883
+      - 1884:1884
     volumes:
+<<<<<<< HEAD
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
     platform: linux/arm/v6
@@ -31,3 +45,47 @@ services:
         condition: service_started
       mqtt:
         condition: service_healthy
+=======
+      - ./data/mosquitto:/mosquitto/data
+      - ./log/mosquitto:/mosquitto/log
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/mosquitto_passwd:/mosquitto/config/mosquitto_passwd
+    networks:
+      - mqtt_network
+  simulator:
+    build: .
+    depends_on:
+      - mqtt
+    environment:
+      MQTT_BROKER_URL: mqtt://mqtt:1884
+      DATA_FREQUENCY: ${DATA_FREQUENCY:-5000}
+      SENSOR_COUNT: ${SENSOR_COUNT:-4}
+      MQTT_QOS: ${MQTT_QOS:-0}
+    env_file:
+      - ./mosquitto/.env
+    networks:
+      - mqtt_network
+      - app_network
+  redis:
+    image: redis/redis-stack:latest
+    container_name: redis-stack
+    restart: unless-stopped
+    ports:
+      - 6380:6379     # Port Redis
+      - 8001:8001     # Port Redis Insight
+    volumes:
+      - ./data/redis:/data
+      - ./redis/redis-stack.conf:/redis-stack.conf # Optionnel : Fichier de configuration personnalisé
+    environment:
+      - REDIS_ARGS=--save 60 1000 --appendonly yes  # Activer la persistance des données
+    networks:
+      - mqtt_network
+
+networks:
+  mqtt_network:
+    driver: bridge
+  app_network:
+    external: true
+
+
+>>>>>>> origin/dev

@@ -1,5 +1,6 @@
-import { home } from '../models/indexModel.js';
+import { home, port } from '../models/indexModel.js';
 import { v4 as uuidv4 } from 'uuid';
+import { Op } from 'sequelize';
 
 export const addPing = async (mac) => {
     try {
@@ -11,7 +12,7 @@ export const addPing = async (mac) => {
             return { code: 404, message: 'Adresse MAC non trouvé' };
         }
 
-        return  { code: 200, message: date };
+        return { code: 200, message: date };
     } catch (error) {
         console.error('Erreur lors de l\'ajout du ping:', error);
         throw error;
@@ -22,8 +23,62 @@ export const addHome = async (mac, sshkey) => {
     try {
         const date = new Date();
 
-        let create = await home.create({id: uuidv4(), mac: mac, last_ping: null, port: null, datecreated: date, sshkey: sshkey });
-        return { code: 200, message: date };
+        let exist = await home.findOne({ where: { mac: mac } });
+        let homeid = null;
+
+        if (!exist) {
+            let create = await home.create({ id: uuidv4(), mac: mac, last_ping: null, datecreated: date, sshkey: sshkey });
+
+            if (!create) {
+                console.error('Erreur lors de la création de la maison');
+                return { code: 500, message: 'Erreur lors de la création de la maison' };
+            }
+
+            homeid = create.id;
+
+            let response = await fetch('http://localhost:7880', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ sshkey: sshkey })
+            });
+
+            if (!response.ok) {
+                console.error('Erreur lors de l\'ajout de la clé SSH');
+                return { code: 500, message: 'Erreur lors de l\'ajout de la clé SSH' };
+            }
+        } else {
+            homeid = exist.id;
+        }
+
+        let ports = [22];
+        let allocatedPorts = [];
+
+        for (let currentPort of ports) {
+            let exist = await port.findOne({ where: { homeid: homeid, port: {[Op.like]: `${currentPort}%`} } });
+            if (exist) {
+                allocatedPorts[currentPort] = exist.port;
+                continue;
+            }
+
+            exist = true
+            let newPort = null;
+            while (exist) {
+                newPort = parseInt(`${currentPort}${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`);
+                exist = await port.findOne({ where: { port: newPort } });
+            }
+
+            let create = await port.create({ homeid: homeid, port: newPort });
+            if (!create) {
+                console.error('Erreur lors de la création du port');
+                return { code: 500, message: 'Erreur lors de la création du port' };
+            }
+
+            allocatedPorts[currentPort] = newPort;
+        }
+
+        return { code: 200, message: { ports: allocatedPorts } };
     } catch (error) {
         console.error('Erreur lors de l\'ajout de la maison:', error);
         throw error;
