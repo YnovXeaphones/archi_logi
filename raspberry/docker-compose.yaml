@@ -20,8 +20,6 @@ services:
       - ./log/mosquitto:/mosquitto/log
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ./mosquitto/mosquitto_passwd:/mosquitto/config/mosquitto_passwd
-    networks:
-      - mqtt_network
   simulator:
     build: .
     depends_on:
@@ -33,9 +31,6 @@ services:
       MQTT_QOS: ${MQTT_QOS:-0}
     env_file:
       - ./mosquitto/.env
-    networks:
-      - mqtt_network
-      - app_network
   redis:
     image: redis/redis-stack:latest
     container_name: redis-stack
@@ -48,11 +43,4 @@ services:
       - ./redis/redis-stack.conf:/redis-stack.conf # Optionnel : Fichier de configuration personnalisé
     environment:
       - REDIS_ARGS=--save 60 1000 --appendonly yes  # Activer la persistance des données
-    networks:
-      - mqtt_network
 
-networks:
-  mqtt_network:
-    driver: bridge
-  app_network:
-    external: true
