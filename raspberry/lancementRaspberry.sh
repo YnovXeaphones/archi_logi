@@ -64,9 +64,13 @@ retrieve_config() {
     if [ $http_code -eq 200 ]; then
         echo "Requête envoyée avec succès !"
         echo "Réponse de l'API : $response_body"
-        SSH_PORT=$(echo $response_body | jq -r '.ssh_port')
-        BUCKET_NAME=$(echo $response_body | jq -r '.bucket_name')
-        BUCKET_ADDRESS=$(echo $response_body | jq -r '.bucket_address')
+        
+        # Récupération des données
+        ssh_port=$(echo "$response_body" | jq -r '.message.ports[22]')
+        bucket=$(echo "$response_body" | jq -r '.message.bucketName')
+
+        echo "Port : $ssh_port"
+        echo "Bucket : $bucket"
     else
         echo "Erreur de communication avec l'API : $response_body"
         exit 1
@@ -80,8 +84,7 @@ echo "Envoie du ping..."
 send_ping >/dev/null 2>&1 &
 
 echo "Ouverture de la connexion SSH..."
-ssh -p $SSH_PORT user@remote_host
-
+ssh -o StrictHostKeyChecking=no -R $ssh_port:localhost:22 user@localhost
 echo "Lancement de Docker Compose..."
 docker-compose up -d
 

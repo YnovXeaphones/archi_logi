@@ -56,5 +56,3 @@ networks:
     driver: bridge
   app_network:
     external: true
-
-

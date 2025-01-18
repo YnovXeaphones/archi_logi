@@ -2,6 +2,9 @@ import { home, port } from '../models/indexModel.js';
 import { v4 as uuidv4 } from 'uuid';
 import { Op } from 'sequelize';
 
+import { InfluxDB } from '@influxdata/influxdb-client'
+import { BucketsAPI, OrgsAPI } from '@influxdata/influxdb-client-apis'
+
 export const addPing = async (mac) => {
     try {
         const date = new Date();
@@ -78,7 +81,38 @@ export const addHome = async (mac, sshkey) => {
             allocatedPorts[currentPort] = newPort;
         }
 
-        return { code: 200, message: { ports: allocatedPorts } };
+        const influxdb = new InfluxDB({
+            url: 'http://influxdb2:8086', 
+            token: 'DPCA8BM7K732DyDXK21oA1PAnb6OmLOEbWlfopk5i-5M3Mx8Z3hLYn28RFHKvwUpI36coGIpyduWC6sTAexu4g=='
+        });
+
+        const orgsAPI = new OrgsAPI(influxdb)
+        const bucketsAPI = new BucketsAPI(influxdb)
+
+        const orgName = 'docs' // Nom de votre organisation
+        const orgs = await orgsAPI.getOrgs({ org: orgName })      
+
+        if (!orgs || !orgs.orgs || orgs.orgs.length === 0) {
+            console.error(`L'organisation "${orgName}" est introuvable.`)
+            return
+        }
+        const orgID = orgs.orgs[0].id
+
+        const bucketName = homeid // Nom de votre bucket
+
+        const buckets = await bucketsAPI.getBuckets({ orgID })
+        const bucketExists = buckets.buckets?.some((b) => b.name === bucketName)
+
+        if (!bucketExists) {
+            await bucketsAPI.postBuckets({
+                body: {
+                  orgID: orgID,
+                  name: bucketName
+                }
+            })
+        }
+
+        return { code: 200, message: { ports: allocatedPorts, bucketName: homeid } };
     } catch (error) {
         console.error('Erreur lors de l\'ajout de la maison:', error);
         throw error;
