@@ -12,4 +12,4 @@ RUN chmod +X run.sh
 
 RUN apt-get update && apt-get install -y openssh-server
 
-CMD ["sh", "./run.sh"]
+CMD ["node", "server.js"]

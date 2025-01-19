@@ -1,6 +1,7 @@
 data/*
 node_modules/*
 api/node_modules/*
+private-api/node_modules/*
 .vscode/*
 broker/node_modules/*
 influxdb2/influx-configs
