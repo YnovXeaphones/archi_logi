@@ -1,3 +1,4 @@
+const fs = require('fs');
 const mqtt = require('mqtt');
 const Redis = require('ioredis');  // Utilisation de ioredis pour Redis
 
@@ -13,7 +14,10 @@ const MQTT_QOS = parseInt(process.env.MQTT_QOS, 10) || 0;
 const REDIS_HOST = process.env.REDIS_HOST || 'localhost';  // Adresse de Redis
 const REDIS_PORT = process.env.REDIS_PORT || 6379;  // Port Redis
 const REDIS_PASSWORD = process.env.REDIS_PASSWORD || 'mypassword';
-
+let BUCKET = 'home';
+if (fs.existsSync('./bucket.txt')) {
+    BUCKET = fs.readFileSync('./bucket.txt', 'utf8').trim();
+}
 
 const options = {
     username: MQTT_USERNAME,
@@ -21,7 +25,7 @@ const options = {
 };
 
 const url = 'http://influxdb.g1.south-squad.io:8086';
-const token = "sc5QPYIoARY7-9U0_Cp5ZrWJIi6brywEHBmDC4DMYtzM9IcB8SD4Y_6JuBSBifODcqWrtWp4NIAFzu86rW2MGw==";
+const token = "super-token-admin";
 
 // Connexion à Redis
 const redis = new Redis({
@@ -83,7 +87,7 @@ async function connectMQTT() {
             const health = await healthApi.getHealth();
             if (health && health.status === 'pass') {
                 const org = 'docs';
-                const bucket = 'home' ; // creation de bucket automatique
+                const bucket = BUCKET ; // creation de bucket automatique
     
                 const writeApi = influxDataBase.getWriteApi(org, bucket);
 

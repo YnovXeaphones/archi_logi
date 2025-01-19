@@ -9,3 +9,4 @@ raspberry/mosquitto/node_modules/*
 raspberry/homeassistant/*
 raspberry/data/*
 raspberry/log/*
+raspberry/mosquitto/bucket.txt

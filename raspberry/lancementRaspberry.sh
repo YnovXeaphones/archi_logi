@@ -71,6 +71,8 @@ retrieve_config() {
 
         echo "Port : $ssh_port"
         echo "Bucket : $bucket"
+
+        echo "$bucket" > ./mosquitto/bucket.txt
     else
         echo "Erreur de communication avec l'API : $response_body"
         exit 1
