@@ -21,7 +21,7 @@ const options = {
 };
 
 const url = 'http://influxdb.g1.south-squad.io:8086';
-const token = "q8mO12cz7LoGgsBd0YhV2j6ysA9kjIW8Bo-gcPRxcY3ez36WEBrwOLXEgMXcH-2Ucyv1DJ2CWuTu32wfnqLuGg==";
+const token = "sc5QPYIoARY7-9U0_Cp5ZrWJIi6brywEHBmDC4DMYtzM9IcB8SD4Y_6JuBSBifODcqWrtWp4NIAFzu86rW2MGw==";
 
 // Connexion à Redis
 const redis = new Redis({
@@ -82,8 +82,8 @@ async function connectMQTT() {
 
             const health = await healthApi.getHealth();
             if (health && health.status === 'pass') {
-                const org = 'Data';
-                const bucket = 'Data' ; // creation de bucket automatique
+                const org = 'docs';
+                const bucket = 'home' ; // creation de bucket automatique
     
                 const writeApi = influxDataBase.getWriteApi(org, bucket);
 

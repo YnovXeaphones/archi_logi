@@ -39,7 +39,7 @@ export const addHome = async (mac, sshkey) => {
 
             homeid = create.id;
 
-            let response = await fetch('http://localhost:7880', {
+            let response = await fetch('http://erver.g1.south-squad.io:7880', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -83,7 +83,7 @@ export const addHome = async (mac, sshkey) => {
 
         const influxdb = new InfluxDB({
             url: 'http://influxdb2:8086', 
-            token: 'DPCA8BM7K732DyDXK21oA1PAnb6OmLOEbWlfopk5i-5M3Mx8Z3hLYn28RFHKvwUpI36coGIpyduWC6sTAexu4g=='
+            token: 'super-token-admin'
         });
 
         const orgsAPI = new OrgsAPI(influxdb)

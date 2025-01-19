@@ -88,6 +88,6 @@ services:
         DOCKER_INFLUXDB_INIT_PASSWORD: test12345
         DOCKER_INFLUXDB_INIT_ORG: docs
         DOCKER_INFLUXDB_INIT_BUCKET: home
+        DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: super-token-admin
       volumes:
         - ./data/influxdb2:/var/lib/influxdb2
-        - ./config/influxdb2:/etc/influxdb2
