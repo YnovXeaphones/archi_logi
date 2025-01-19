@@ -35,7 +35,7 @@ send_ping() {
     while true; do
         mac=$(get_mac_address)
         json_data="{\"mac\": \"$mac\"}"
-        RESPONSE=$(curl --silent --write-out "%{http_code}" --output /dev/null -X POST "http://localhost:3000/ping" -H "Content-Type: application/json" -d "$json_data")
+        RESPONSE=$(curl --silent --write-out "%{http_code}" --output /dev/null -X POST "http://server.g1.south-squad:3000/ping" -H "Content-Type: application/json" -d "$json_data")
         
         # Vérifier que la réponse est OK (200)
         if [ "$RESPONSE" == "200" ]; then
@@ -52,7 +52,7 @@ retrieve_config() {
     mac=$(get_mac_address)
     sshkey=$(get_ssh_key)
     json_data="{\"mac\": \"$mac\", \"sshkey\": \"$sshkey\"}"
-    api_url="http://localhost:3000/register"
+    api_url="http://server.g1.south-squad.io:3000/register"
 
     echo "$json_data"
 
