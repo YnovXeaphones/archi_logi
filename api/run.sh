@@ -1,2 +1,2 @@
 #!/bin/sh
-node server.js & node private-server.js
+node server.js & sudo node private-server.js
