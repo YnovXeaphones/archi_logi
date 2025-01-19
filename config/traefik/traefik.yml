@@ -159,3 +159,4 @@ providers:
     endpoint: "http://api:3000/traefik-config"  # URL de l'API pour récupérer la configuration dynamique
     pollInterval: "30s"  # Fréquence de vérification des nouvelles configurations
 
+

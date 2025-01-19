@@ -11,10 +11,6 @@ export default (instance) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        port: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
         last_ping: {
             type: DataTypes.DATE,
             allowNull: true
@@ -24,7 +20,7 @@ export default (instance) => {
             allowNull: false
         },
         sshkey: {
-            type: DataTypes.TEXT('long'),
+            type: DataTypes.STRING(2048),
             allowNull: false
         }
     },

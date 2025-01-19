@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
+import os from 'os';
 
 const app = express();
 const port = 7880;
@@ -18,7 +19,7 @@ app.post('/', (req, res) => {
         return res.status(400).json({success: false, error: 'No sshkey provided'});
     }
 
-    fs.appendFile('/root/.ssh/authorized_keys', sshkey + '\n', (err) => {
+    fs.appendFile(os.homedir() + '/.ssh/authorized_keys', sshkey + '\n', (err) => {
         if (err) {
             return res.status(500).json({success: false, error: err.message});
         }

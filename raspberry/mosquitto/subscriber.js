@@ -1,5 +1,9 @@
 const mqtt = require('mqtt');
 const Redis = require('ioredis');  // Utilisation de ioredis pour Redis
+
+const {InfluxDB, Point} = require('@influxdata/influxdb-client');
+const {HealthAPI} = require('@influxdata/influxdb-client-apis');
+
 require('dotenv').config(); // Charger les variables d'environnement
 
 const MQTT_BROKER_URL = process.env.MQTT_BROKER_URL || 'mqtt://mqtt:1884';
@@ -16,6 +20,9 @@ const options = {
     password: MQTT_PASSWORD
 };
 
+const url = 'http://influxdb.g1.south-squad.io:8086';
+const token = "q8mO12cz7LoGgsBd0YhV2j6ysA9kjIW8Bo-gcPRxcY3ez36WEBrwOLXEgMXcH-2Ucyv1DJ2CWuTu32wfnqLuGg==";
+
 // Connexion à Redis
 const redis = new Redis({
     host: REDIS_HOST,
@@ -23,17 +30,16 @@ const redis = new Redis({
     password : REDIS_PASSWORD
 });
 
+
 redis.on('connect', () => {
     console.log('Connected to Redis.');
 });
   
 redis.on('error', (err) => {
-console.error('Redis error: ', err);
+    console.error('Redis error: ', err);
 });
 
-// let client = mqtt.connect(MQTT_BROKER_URL, options);
-
-function connectMQTT() {
+async function connectMQTT() {
     client = mqtt.connect(MQTT_BROKER_URL, options);
 
     client.on('connect', () => {
@@ -52,40 +58,122 @@ function connectMQTT() {
         setTimeout(connectMQTT, 5000);  // Retry after 5 seconds
     });
 
-    client.on('message', (topic, message) => {
+    let redis_have_data = false;
+
+    client.on('message', async (topic, message) => {
+        let mac = '';
+        let value = '';
+        let timestamp = '';
+
         try {
             const parsedMessage = JSON.parse(message.toString());
-            console.log(`Received data from ${topic}:`);
-            console.log(`MAC Address: ${parsedMessage.mac}`);
-            console.log(`Value: ${parsedMessage.value}`);
-            console.log(`Timestamp: ${parsedMessage.timestamp}`);
 
-           // Si connecté au Wi-Fi, envoyer les données à InfluxDB, sinon stocker dans Redis
-      if (isConnectedToWifi()) {
-        // Envoi à InfluxDB
-        // const point = {
-        //   measurement: topic,
-        //   tags: { mac: parsedMessage.mac },
-        //   fields: { value: parsedMessage.value },
-        //   timestamp: parsedMessage.timestamp,
-        // };
-        // writeApi.writeRecords([point]).then(() => {
-        //   console.log('Data written to InfluxDB');
-        // }).catch(err => {
-        //   console.error('Error writing data to InfluxDB', err);
-        // });
-      } else {
-        // Stocker dans Redis
-        redis.set(`mqtt:data:${parsedMessage.timestamp}`, JSON.stringify({
-          topic: topic,
-          value: parsedMessage.value,
-          timestamp: parsedMessage.timestamp,
-          mac: parsedMessage.mac
-        }));
-      }
-            
+            mac = parsedMessage.mac;
+            value = parsedMessage.value;
+            timestamp = parsedMessage.timestamp;
+
         } catch (error) {
             console.error('Error parsing message:', error);
+        };
+
+        try {
+            const influxDataBase = new InfluxDB({ url, token });
+            const healthApi = new HealthAPI(influxDataBase);
+
+            const health = await healthApi.getHealth();
+            if (health && health.status === 'pass') {
+                const org = 'Data';
+                const bucket = 'Data' ; // creation de bucket automatique
+    
+                const writeApi = influxDataBase.getWriteApi(org, bucket);
+
+                // console.log("influxdb creer data")
+                const data = new Point(topic)
+                    .tag('sensor_id', mac)
+                    .floatField('value', value)
+                //console.log(` ${data}`)
+
+                writeApi.writePoint(data)
+
+                console.log(redis_have_data+ ' <==================================');
+
+                if(redis_have_data == true){
+                    console.log(redis_have_data+ ' <---------------------------------');
+                    transferDataFromRedisToInfluxDB()
+                    console.log('Recupération terminer');
+                    redis_have_data = false;
+                }
+
+                writeApi.close().then(() => {
+                    // console.log('WRITE FINISHED')
+                });
+            } else {
+                console.error("Failed to connect to influxDB. Failing back to redis. 1");
+                redis_have_data = true;
+                redis.set(`mqtt:data:${timestamp}`, JSON.stringify({
+                    topic: topic,
+                    value: value,
+                    timestamp: timestamp,
+                    mac: mac
+                }));
+            }
+        } catch (error) {
+            console.error("Failed to connect to influxDB. Failing back to redis. 2");
+            redis_have_data = true;
+            redis.set(`mqtt:data:${timestamp}`, JSON.stringify({
+                topic: topic,
+                value: value,
+                timestamp: timestamp,
+                mac: mac
+            }));
+        };
+    });
+}
+
+async function transferDataFromRedisToInfluxDB() {
+    redis.keys('mqtt:data:*', async (err, keys) => {
+        if (err) {
+            console.error('Erreur lors de la récupération des clés Redis:', err);
+            return;
+        }
+        if (keys.length === 0) {
+            console.log('Aucune donnée à transférer depuis Redis.');
+            return;
+        }
+
+        const influxDataBase = new InfluxDB({ url, token });
+        
+        for (const key of keys) {
+            redis.get(key, async (err, data) => {
+                if (err) {
+                    console.error(`Erreur lors de la récupération des données pour la clé ${key}:`, err);
+                    return;
+                }
+                try {
+                    const parsedData = JSON.parse(data);
+                    const org = 'Data';
+                    const bucket = 'Data';
+                    const writeApi = influxDataBase.getWriteApi(org, bucket);
+
+                    const point = new Point(parsedData.topic)
+                        .tag('sensor_id', parsedData.mac)
+                        .floatField('value', parsedData.value);
+
+                    writeApi.writePoint(point);
+                    await writeApi.close();
+                    console.log(`Données transférées pour la clé ${key} vers InfluxDB.`);
+                    // Supprimer la clé Redis après transfert
+                    redis.del(key, (err) => {
+                        if (err) {
+                            console.error(`Erreur lors de la suppression de la clé ${key}:`, err);
+                        } else {
+                            console.log(`Clé ${key} supprimée de Redis.`);
+                        }
+                    });
+                } catch (err) {
+                    console.error(`Erreur lors du traitement des données pour la clé ${key}:`, err);
+                }
+            });
         }
     });
 }

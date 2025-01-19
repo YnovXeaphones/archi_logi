@@ -3,6 +3,7 @@
 import Sequelize from 'sequelize';
 import dbConfig from '../db.config.js';
 import homeModel from './homeModel.js';
+import portModel from './portModel.js';
 
 async function connectWithRetry() {
     let retries = 5;
@@ -41,7 +42,8 @@ export const initializeSequelize = async () => {
     try {
         const instance = await connectWithRetry();
         const home = homeModel(instance);
-        return { instance, home };
+        const port = portModel(instance);
+        return { instance, home, port };
     } catch (error) {
         console.error('Échec de la connexion:', error.message);
         process.exit(1);
@@ -49,7 +51,7 @@ export const initializeSequelize = async () => {
 };
 
 // Appel de la fonction pour obtenir les instances
-const { instance, home } = await initializeSequelize();
+const { instance, home, port } = await initializeSequelize();
 
 // Exportation de l'instance et du modèle
-export { instance, home };
+export { instance, home, port };
