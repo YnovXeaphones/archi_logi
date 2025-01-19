@@ -1,26 +1,24 @@
-http:
-  routers:
-    whoami:
-      rule: "Host(`whoami.docker.localhost`)"
-      service: whoami-service
-      entryPoints:
-        - web
-        - websecure
-
-    new-router:
-      rule: "Host(`new-service.docker.localhost`)"
-      service: new-service
-      entryPoints:
-        - web
-        - websecure
-
-  services:
-    whoami-service:
-      loadBalancer:
-        servers:
-          - url: "http://whoami:80"
-
-    new-service:
-      loadBalancer:
-        servers:
-          - url: "http://whoami:80" 
+{
+  "http": {
+    "routers": {
+      "08-bf-b8-57-fa-74-router": {
+        "entryPoints": [
+          "web"
+        ],
+        "rule": "Host(`rasp-08-bf-b8-57-fa-74.g1.south-squad.io`)",
+        "service": "08-bf-b8-57-fa-74-service"
+      }
+    },
+    "services": {
+      "08-bf-b8-57-fa-74-service": {
+        "loadBalancer": {
+          "servers": [
+            {
+              "url": "http://rasp-08-bf-b8-57-fa-74.g1.south-squad.io"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
