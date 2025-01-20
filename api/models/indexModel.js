@@ -6,7 +6,7 @@ import homeModel from './homeModel.js';
 import portModel from './portModel.js';
 
 async function connectWithRetry() {
-    let retries = 5;
+    let retries = 10;
     let lastError;
 
     while (retries > 0) {
