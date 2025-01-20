@@ -1,3 +1,5 @@
+// indexModel.js
+
 import Sequelize from 'sequelize';
 import dbConfig from '../db.config.js';
 import homeModel from './homeModel.js';

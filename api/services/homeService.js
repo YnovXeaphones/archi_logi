@@ -39,7 +39,7 @@ export const addHome = async (mac, sshkey) => {
 
             homeid = create.id;
 
-            let response = await fetch('http://localhost:7880', {
+            let response = await fetch('http://erver.g1.south-squad.io:7880', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -83,7 +83,7 @@ export const addHome = async (mac, sshkey) => {
 
         const influxdb = new InfluxDB({
             url: 'http://influxdb2:8086', 
-            token: 'DPCA8BM7K732DyDXK21oA1PAnb6OmLOEbWlfopk5i-5M3Mx8Z3hLYn28RFHKvwUpI36coGIpyduWC6sTAexu4g=='
+            token: 'super-token-admin'
         });
 
         const orgsAPI = new OrgsAPI(influxdb)
@@ -117,4 +117,25 @@ export const addHome = async (mac, sshkey) => {
         console.error('Erreur lors de l\'ajout de la maison:', error);
         throw error;
     }
-}
+};
+
+export const getActiveDevices = async () => {
+    try {
+        const now = new Date();
+        const threshold = new Date(now.getTime() - 5 * 60 * 1000); // Dernier ping dans les 5 minutes
+
+        // Conversion de la date au format acceptable pour SQL
+        const formattedThreshold = threshold.toISOString().slice(0, 19).replace('T', ' ');
+
+        // Requête pour récupérer les appareils actifs
+        const activeDevices = await home.findAll({
+            where: Sequelize.literal(`last_ping > '${formattedThreshold}'`), // Utilise une condition SQL brute
+            attributes: ['id', 'mac', 'port','last_ping','datecreated', 'sshkey', ], // Adapter selon les colonnes de ta table
+        });
+
+        return activeDevices;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des appareils actifs:', error);
+        throw new Error('Erreur serveur lors de la récupération des appareils actifs.');
+    }
+};

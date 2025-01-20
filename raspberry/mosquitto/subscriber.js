@@ -1,3 +1,4 @@
+const fs = require('fs');
 const mqtt = require('mqtt');
 const Redis = require('ioredis');  // Utilisation de ioredis pour Redis
 
@@ -13,7 +14,11 @@ const MQTT_QOS = parseInt(process.env.MQTT_QOS, 10) || 0;
 const REDIS_HOST = process.env.REDIS_HOST || 'localhost';  // Adresse de Redis
 const REDIS_PORT = process.env.REDIS_PORT || 6379;  // Port Redis
 const REDIS_PASSWORD = process.env.REDIS_PASSWORD || 'mypassword';
-
+const ORG = 'docs'
+let BUCKET = 'home';
+if (fs.existsSync('./bucket.txt')) {
+    BUCKET = fs.readFileSync('./bucket.txt', 'utf8').trim();
+}
 
 const options = {
     username: MQTT_USERNAME,
@@ -21,7 +26,7 @@ const options = {
 };
 
 const url = 'http://influxdb.g1.south-squad.io:8086';
-const token = "q8mO12cz7LoGgsBd0YhV2j6ysA9kjIW8Bo-gcPRxcY3ez36WEBrwOLXEgMXcH-2Ucyv1DJ2CWuTu32wfnqLuGg==";
+const token = "super-token-admin";
 
 // Connexion à Redis
 const redis = new Redis({
@@ -82,10 +87,7 @@ async function connectMQTT() {
 
             const health = await healthApi.getHealth();
             if (health && health.status === 'pass') {
-                const org = 'Data';
-                const bucket = 'Data' ; // creation de bucket automatique
-    
-                const writeApi = influxDataBase.getWriteApi(org, bucket);
+                const writeApi = influxDataBase.getWriteApi(ORG, BUCKET);
 
                 // console.log("influxdb creer data")
                 const data = new Point(topic)
@@ -151,9 +153,7 @@ async function transferDataFromRedisToInfluxDB() {
                 }
                 try {
                     const parsedData = JSON.parse(data);
-                    const org = 'Data';
-                    const bucket = 'Data';
-                    const writeApi = influxDataBase.getWriteApi(org, bucket);
+                    const writeApi = influxDataBase.getWriteApi(ORG, BUCKET);
 
                     const point = new Point(parsedData.topic)
                         .tag('sensor_id', parsedData.mac)
@@ -177,5 +177,55 @@ async function transferDataFromRedisToInfluxDB() {
         }
     });
 }
+
+// Fonction pour envoyer les données stockées dans Redis à InfluxDB
+// function sendDataToInfluxDB() {
+//     redis.keys('mqtt:data:*', (err, keys) => {
+//       if (err) {
+//         console.error('Error retrieving keys from Redis:', err);
+//         return;
+//       }
+  
+//       if (keys.length === 0) {
+//         console.log('No data to send to InfluxDB');
+//         return;
+//       }
+  
+//       // Récupérer les données stockées dans Redis
+//       redis.mget(keys, (err, data) => {
+//         if (err) {
+//           console.error('Error retrieving data from Redis:', err);
+//           return;
+//         }
+  
+//         const points = data.map((item) => {
+//           const parsedItem = JSON.parse(item);
+//           return {
+//             measurement: parsedItem.topic,
+//             tags: { mac: parsedItem.mac },
+//             fields: { value: parsedItem.value },
+//             timestamp: parsedItem.timestamp,
+//           };
+//         });
+  
+//         // Envoi des données à InfluxDB
+//         writeApi.writeRecords(points).then(() => {
+//           console.log('Data written to InfluxDB');
+//           // Nettoyer Redis après envoi
+//           redis.del(keys);
+//           console.log('Redis data cleared');
+//         }).catch(err => {
+//           console.error('Error writing data to InfluxDB', err);
+//         });
+//       });
+//     });
+//   }
+  
+//   // Vérifier périodiquement si la connexion Wi-Fi est rétablie et envoyer les données stockées
+//   setInterval(() => {
+//     if (isConnectedToWifi()) {
+//       sendDataToInfluxDB();
+//     }
+//   }, 30000);  // Vérification toutes les 30 secondes
 
 connectMQTT();

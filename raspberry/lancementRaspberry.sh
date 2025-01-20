@@ -35,7 +35,7 @@ send_ping() {
     while true; do
         mac=$(get_mac_address)
         json_data="{\"mac\": \"$mac\"}"
-        RESPONSE=$(curl --silent --write-out "%{http_code}" --output /dev/null -X POST "http://localhost:3000/ping" -H "Content-Type: application/json" -d "$json_data")
+        RESPONSE=$(curl --silent --write-out "%{http_code}" --output /dev/null -X POST "http://server.g1.south-squad:3000/ping" -H "Content-Type: application/json" -d "$json_data")
         
         # Vérifier que la réponse est OK (200)
         if [ "$RESPONSE" == "200" ]; then
@@ -52,7 +52,7 @@ retrieve_config() {
     mac=$(get_mac_address)
     sshkey=$(get_ssh_key)
     json_data="{\"mac\": \"$mac\", \"sshkey\": \"$sshkey\"}"
-    api_url="http://localhost:3000/register"
+    api_url="http://server.g1.south-squad.io:3000/register"
 
     echo "$json_data"
 
@@ -71,6 +71,8 @@ retrieve_config() {
 
         echo "Port : $ssh_port"
         echo "Bucket : $bucket"
+
+        echo "$bucket" > ./mosquitto/bucket.txt
     else
         echo "Erreur de communication avec l'API : $response_body"
         exit 1
@@ -86,6 +88,6 @@ send_ping >/dev/null 2>&1 &
 echo "Ouverture de la connexion SSH..."
 ssh -o StrictHostKeyChecking=no -N -R $ssh_port:localhost:80 g1@server.g1.south-squad.io &
 echo "Lancement de Docker Compose..."
-docker-compose up -d
+docker-compose up -d --build
 
 echo "Fin du script"

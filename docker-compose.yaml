@@ -1,4 +1,5 @@
-version: '2'
+version: '3.8'
+
 services:
     db:
       image: mysql:latest
@@ -41,6 +42,10 @@ services:
         - /var/run/docker.sock:/var/run/docker.sock
         - ./config/traefik/traefik.yml:/etc/traefik/traefik.yml 
         - ./config/traefik/dynamic-config.yml:/etc/traefik/dynamic-config.yml  # Configuration dynamique de Traefik
+        - ./config/traefik/dynamic-config.yml:/app/config/traefik/dynamic-config.yml # Volume partagé avec l'API
+      depends_on:
+        - api
+     
     whoami:
       image: traefik/whoami
       deploy:
@@ -49,6 +54,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
         - "traefik.http.services.whoami.loadbalancer.server.port=80"
+
     api:
       build: ./api
       ports:
@@ -69,7 +75,9 @@ services:
         # - "traefik.http.routers.api.tls=true"  # Activer TLS pour HTTPS
         # - "traefik.http.routers.api.tls.certresolver=http"  # Utilisation de Let's Encrypt pour obtenir le certificat
         - "traefik.http.services.api.loadbalancer.server.port=3000"  # Indiquer que le service écoute sur le port 3000 à l'intérieur du container
-    
+      volumes:
+        - ./config/traefik:/app/config/traefik # L'API écrit ici
+        
     influxdb2:
       image: influxdb:2.7
       ports:
@@ -80,6 +88,6 @@ services:
         DOCKER_INFLUXDB_INIT_PASSWORD: test12345
         DOCKER_INFLUXDB_INIT_ORG: docs
         DOCKER_INFLUXDB_INIT_BUCKET: home
+        DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: super-token-admin
       volumes:
         - ./data/influxdb2:/var/lib/influxdb2
-        - ./config/influxdb2:/etc/influxdb2

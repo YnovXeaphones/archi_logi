@@ -155,7 +155,8 @@ providers:
     filename: /etc/traefik/dynamic-config.yml  # Indication du fichier de config dynamique
     watch: true
 
-  # http:
-  #   endpoint: "http://api:localhost/traefik-config"  # URL de l'API pour récupérer la configuration dynamique
-  #   pollInterval: "30s"  # Fréquence de vérification des nouvelles configurations
+  http:
+    endpoint: "http://api:3000/traefik-config"  # URL de l'API pour récupérer la configuration dynamique
+    pollInterval: "30s"  # Fréquence de vérification des nouvelles configurations
+
 
