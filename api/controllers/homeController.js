@@ -2,6 +2,7 @@ import { addPing, addHome, getConfig } from '../services/homeService.js';
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
+import { error } from 'console';
 
 export const ping = async (req, res) => {
     try {
@@ -51,6 +52,8 @@ export const traefikconfig = async (req, res) => {
         if (config) {
             res.setHeader('Content-Type', 'application/x-yaml');
             res.status(200).send(config);
+        }else{
+            res.status(400).json({message: 'No open port',error: ''})
         }
     } catch (error) {
         console.error('Erreur lors de la génération de la configuration Traefik:', error);

@@ -2,7 +2,7 @@ import { home, port } from '../models/indexModel.js';
 import { v4 as uuidv4 } from 'uuid';
 import Sequelize, { where } from 'sequelize';
 import { Op } from 'sequelize';
-import { yaml } from 'js-yaml';
+import yaml from 'js-yaml';
 
 
 import { InfluxDB } from '@influxdata/influxdb-client'
@@ -42,7 +42,7 @@ export const addHome = async (mac, sshkey) => {
 
             homeid = create.id;
 
-            let response = await fetch('http://erver.g1.south-squad.io:7880', {
+            let response = await fetch('http://g1.south-squad.io:7880', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -157,7 +157,7 @@ export const getConfig = async () => {
             loadBalancer: {
                 servers: [
                     {
-                        url: `http://rasp-${homeid}:${port}`,
+                        url: `http://g1.south-squad.io:${port}`,
                     },
                 ],
             },

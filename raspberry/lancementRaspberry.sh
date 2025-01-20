@@ -73,6 +73,8 @@ retrieve_config() {
         echo "Bucket : $bucket"
 
         echo "$bucket" > ./mosquitto/bucket.txt
+
+        echo "http://rasp-$bucket.g1.south-squad.io"
     else
         echo "Erreur de communication avec l'API : $response_body"
         exit 1
