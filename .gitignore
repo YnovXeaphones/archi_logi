@@ -8,3 +8,7 @@ raspberry/mosquitto/node_modules/*
 raspberry/homeassistant/*
 raspberry/data/*
 raspberry/log/*
+config/influxdb2/influx-configs
+raspberry/data/redis/appendonlydir/appendonly.aof.1.incr.aof
+raspberry/data/redis/dump.rdb
+raspberry/data/redis/appendonlydir/appendonly.aof.1.incr.aof
