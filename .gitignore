@@ -1,2 +1,16 @@
 data/*
 node_modules/*
+api/node_modules/*
+private-api/node_modules/*
+.vscode/*
+broker/node_modules/*
+influxdb2/influx-configs
+raspberry/mosquitto/node_modules/*
+raspberry/homeassistant/*
+raspberry/data/*
+raspberry/log/*
+config/influxdb2/influx-configs
+raspberry/data/redis/appendonlydir/appendonly.aof.1.incr.aof
+raspberry/data/redis/dump.rdb
+raspberry/data/redis/appendonlydir/appendonly.aof.1.incr.aof
+raspberry/mosquitto/bucket.txt

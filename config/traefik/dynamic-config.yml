@@ -1,0 +1,24 @@
+{
+  "http": {
+    "routers": {
+      "08-bf-b8-57-fa-74-router": {
+        "entryPoints": [
+          "web"
+        ],
+        "rule": "Host(`rasp-08-bf-b8-57-fa-74.g1.south-squad.io`)",
+        "service": "08-bf-b8-57-fa-74-service"
+      }
+    },
+    "services": {
+      "08-bf-b8-57-fa-74-service": {
+        "loadBalancer": {
+          "servers": [
+            {
+              "url": "http://rasp-08-bf-b8-57-fa-74.g1.south-squad.io"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

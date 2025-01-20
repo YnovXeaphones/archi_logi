@@ -1,0 +1,21 @@
+{
+  "name": "sensor-simulation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@influxdata/influxdb-client": "^1.35.0",
+    "@influxdata/influxdb-client-apis": "^1.35.0",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.5",
+    "ioredis": "^5.4.1",
+    "mqtt": "^5.10.1",
+    "sensor-simulation": "file:"
+  }
+}
