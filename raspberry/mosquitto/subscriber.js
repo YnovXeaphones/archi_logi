@@ -110,7 +110,7 @@ async function connectMQTT() {
                     // console.log('WRITE FINISHED')
                 });
             } else {
-                console.error("Failed to connect to influxDB. Failing back to redis. 1");
+                console.error("Failed to connect to influxDB. Failing back to redis: ", health);
                 redis_have_data = true;
                 redis.set(`mqtt:data:${timestamp}`, JSON.stringify({
                     topic: topic,
@@ -120,7 +120,7 @@ async function connectMQTT() {
                 }));
             }
         } catch (error) {
-            console.error("Failed to connect to influxDB. Failing back to redis. 2");
+            console.error("Failed to connect to influxDB. Failing back to redis: ", error.message);
             redis_have_data = true;
             redis.set(`mqtt:data:${timestamp}`, JSON.stringify({
                 topic: topic,

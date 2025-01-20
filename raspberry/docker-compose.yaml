@@ -37,7 +37,7 @@ services:
     restart: unless-stopped
     ports:
       - 6380:6379     # Port Redis
-      - 8001:8001     # Port Redis Insight
+      - 80:8001     # Port Redis Insight
     volumes:
       - ./data/redis:/data
       - ./redis/redis-stack.conf:/redis-stack.conf # Optionnel : Fichier de configuration personnalisé

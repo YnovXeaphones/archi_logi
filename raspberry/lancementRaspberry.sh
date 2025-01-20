@@ -86,7 +86,7 @@ echo "Envoie du ping..."
 send_ping >/dev/null 2>&1 &
 
 echo "Ouverture de la connexion SSH..."
-ssh -o StrictHostKeyChecking=no -N -R $ssh_port:localhost:80 g1@server.g1.south-squad.io &
+ssh -o StrictHostKeyChecking=no -f -N -R $ssh_port:localhost:80 g1@server.g1.south-squad.io
 echo "Lancement de Docker Compose..."
 docker-compose up -d --build
 
