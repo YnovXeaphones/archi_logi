@@ -14,6 +14,7 @@ const MQTT_QOS = parseInt(process.env.MQTT_QOS, 10) || 0;
 const REDIS_HOST = process.env.REDIS_HOST || 'localhost';  // Adresse de Redis
 const REDIS_PORT = process.env.REDIS_PORT || 6379;  // Port Redis
 const REDIS_PASSWORD = process.env.REDIS_PASSWORD || 'mypassword';
+const ORG = 'docs'
 let BUCKET = 'home';
 if (fs.existsSync('./bucket.txt')) {
     BUCKET = fs.readFileSync('./bucket.txt', 'utf8').trim();
@@ -86,10 +87,7 @@ async function connectMQTT() {
 
             const health = await healthApi.getHealth();
             if (health && health.status === 'pass') {
-                const org = 'docs';
-                const bucket = BUCKET ; // creation de bucket automatique
-    
-                const writeApi = influxDataBase.getWriteApi(org, bucket);
+                const writeApi = influxDataBase.getWriteApi(ORG, BUCKET);
 
                 // console.log("influxdb creer data")
                 const data = new Point(topic)
@@ -155,9 +153,7 @@ async function transferDataFromRedisToInfluxDB() {
                 }
                 try {
                     const parsedData = JSON.parse(data);
-                    const org = 'Data';
-                    const bucket = 'Data';
-                    const writeApi = influxDataBase.getWriteApi(org, bucket);
+                    const writeApi = influxDataBase.getWriteApi(ORG, BUCKET);
 
                     const point = new Point(parsedData.topic)
                         .tag('sensor_id', parsedData.mac)
