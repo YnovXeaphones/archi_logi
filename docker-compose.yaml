@@ -20,11 +20,11 @@ services:
       restart: always
       ports:
         - 8081:80
-    rabbit:
-      image: rabbitmq:3-management
-      ports:
-        - 5672:5672
-        - 15672:15672
+    # rabbit:
+    #   image: rabbitmq:3-management
+    #   ports:
+    #     - 5672:5672
+    #     - 15672:15672
     reverse-proxy:
       # The official v3 Traefik docker image
       image: traefik:v3.2
