@@ -155,9 +155,12 @@ async function transferDataFromRedisToInfluxDB() {
                     const parsedData = JSON.parse(data);
                     const writeApi = influxDataBase.getWriteApi(ORG, BUCKET);
 
+                    const timestamp = new Date(parsedData.timestamp);
+
                     const point = new Point(parsedData.topic)
                         .tag('sensor_id', parsedData.mac)
-                        .floatField('value', parsedData.value);
+                        .floatField('value', parsedData.value)
+                        .timestamp(timestamp)
 
                     writeApi.writePoint(point);
                     await writeApi.close();
