@@ -1,7 +1,8 @@
 import { home, port } from '../models/indexModel.js';
 import { v4 as uuidv4 } from 'uuid';
-import Sequelize from 'sequelize';
+import Sequelize, { where } from 'sequelize';
 import { Op } from 'sequelize';
+import { yaml } from 'js-yaml';
 
 
 import { InfluxDB } from '@influxdata/influxdb-client'
@@ -121,44 +122,49 @@ export const addHome = async (mac, sshkey) => {
     }
 };
 
-export const getActiveDevices = async () => {
-    try {
-        const now = new Date();
-        const threshold = new Date(now.getTime() - 5 * 60 * 1000); // Dernier ping dans les 5 minutes
+export const getConfig = async () => {
+    let config = {
+        http: {
+            routers: {},
+            services: {},
+        },
+    };
 
-        // Conversion de la date au format acceptable pour SQL
-        const formattedThreshold = threshold.toISOString().slice(0, 19).replace('T', ' ');
-
-        // Étape 1 : Récupérer les appareils actifs
-        const activeDevices = await home.findAll({
-            where: Sequelize.literal(`last_ping > '${formattedThreshold}'`),
-            attributes: ['id', 'mac', 'last_ping', 'datecreated', 'sshkey'],
-        });
-
-
-        // Étape 2 : Filtrer les ports avec un motif spécifique
-        const currentPortPattern = '80%'; // Exemple : tous les ports qui commencent par "80"
-        const ports = await port.findAll({
-            where: {
-                port: {
-                    [Op.like]: `${currentPortPattern}`,
-                },
+    const activePorts = await port.findAll({
+        where: {
+            port: {
+                [Op.like]: '80%',
             },
-            attributes: ['homeid', 'port'], // Garder uniquement les colonnes nécessaires
-        });
+        },
+        attributes: ['homeid', 'port'],
+    });
 
-        // Étape 3 : Associer les ports aux appareils actifs
-        const devicesWithPorts = activeDevices.map((device) => {
-            const devicePorts = ports.filter((p) => p.homeid === device.id); // Trouver les ports correspondants
-            return {
-                ...device.toJSON(), // Convertir l'objet Sequelize en objet JSON natif
-                ports: devicePorts.map((p) => p.port), // Ajouter les ports sous forme de tableau
-            };
-        });
-
-        return devicesWithPorts;
-    } catch (error) {
-        console.error('Erreur lors de la récupération des appareils actifs:', error);
-        throw new Error('Erreur serveur lors de la récupération des appareils actifs.');
+    if (!activePorts.length) {
+        return null;
     }
+
+    for (const { homeid, port } of activePorts) {
+        const routerName = `${homeid}-router`;
+        const serviceName = `${homeid}-service`;
+
+        config.http.routers[routerName] = {
+            entryPoints: ['web'],
+            rule: `Host(\`rasp-${homeid}.g1.south-squad.io\`)`,
+            service: serviceName,
+        };
+
+        config.http.services[serviceName] = {
+            loadBalancer: {
+                servers: [
+                    {
+                        url: `http://rasp-${homeid}:${port}`,
+                    },
+                ],
+            },
+        };
+    }
+
+    const yamlConfig = yaml.dump(config);
+
+    return yamlConfig;
 }

@@ -1,4 +1,4 @@
-import { addPing, addHome, getActiveDevices } from '../services/homeService.js';
+import { addPing, addHome, getConfig } from '../services/homeService.js';
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
@@ -46,66 +46,12 @@ export const register = async (req, res) => {
 export const traefikconfig = async (req, res) => {
     try {
         // Récupérer les appareils actifs
-        const activeDevices = await getActiveDevices();
+        const config = await getConfig();
 
-        console.log('DONNES : ', activeDevices)
-
-        if (!activeDevices || activeDevices.length === 0) {
-            return res.status(200).json({ http: { routers: {}, services: {} } });
+        if (config) {
+            res.setHeader('Content-Type', 'application/x-yaml');
+            res.status(200).send(config);
         }
-
-        // Construire la configuration dynamique
-        const config = {
-            http: {
-                routers: {},
-                services: {},
-            },
-        };
-
-        activeDevices.forEach((device) => {
-            const mac = device.mac.replace(/:/g, '-'); // Remplacer ":" par "-" pour un format valide
-            const host = `TEST-${mac}.g1.south-squad.io`; // Construire le domaine basé sur le MAC
-
-            // Ajouter un routeur
-            config.http.routers[`${mac}-router`] = {
-                entryPoints: ['web'],
-                rule: `Host(\`${host}\`)`,
-                service: `${mac}-service`,
-            };
-
-            // Ajouter un service
-            config.http.services[`${mac}-service`] = {
-                loadBalancer: {
-                    servers: [
-                        {
-                            url: `http://${host}`,
-                        },
-                    ],
-                },
-            };
-        });
-
-        // Chemin vers le fichier dynamic-config.yml
-        const configDir = path.resolve('/app/config/traefik');
-        const configPath = path.join(configDir, 'dynamic-config.yml');
-
-        // Vérifier si le répertoire existe, sinon le créer
-        if (!fs.existsSync(configDir)) {
-            fs.mkdirSync(configDir, { recursive: true });
-        }
-
-        // Générer et écrire le fichier YAML
-        try {
-            const yamlContent = yaml.dump(config);
-            console.log('YAML validé :\n', yamlContent);
-            fs.writeFileSync(configPath, yamlContent);
-        } catch (err) {
-            console.error('Erreur de validation ou d\'écriture YAML:', err.message);
-            return res.status(500).json({ message: 'Erreur lors de la génération du fichier YAML', error: err.message });
-        }
-
-        // Retourner la configuration générée
-        res.status(200).json(config);
     } catch (error) {
         console.error('Erreur lors de la génération de la configuration Traefik:', error);
         res.status(500).json({ message: 'Erreur serveur', error: error.message });
